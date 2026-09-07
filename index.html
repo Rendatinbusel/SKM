@@ -478,12 +478,34 @@
       tombol.disabled = true; 
       btnText.innerText = "Mengirim..."; 
       
-      // Simulasi pengiriman data (Anda bisa integrasikan ini ke Google Script seperti file index sebelumnya)
-      setTimeout(() => {
-        document.getElementById('popupModal').classList.add('active');
+      // Mengambil seluruh data dari form
+      var form = document.getElementById("formSurvey");
+      var formData = new FormData(form);
+      var dataObj = Object.fromEntries(formData.entries());
+
+      // PASTE URL GOOGLE SCRIPT ANDA DI BAWAH INI
+      var scriptURL = 'https://script.google.com/macros/s/AKfycbxg9we8e7gERGnBFfY-7t6QDVR2_qpmnP97YfdDvLgbhRg_RtAC5ueiRU2n6kZ8ThHo/exec';
+
+      fetch(scriptURL, { 
+        method: 'POST', 
+        body: JSON.stringify(dataObj) 
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") {
+          document.getElementById('popupModal').classList.add('active');
+          form.reset(); // Mengosongkan form setelah berhasil
+        } else {
+          alert("Terjadi kesalahan: " + data.message);
+        }
         tombol.disabled = false; 
         btnText.innerText = "Kirim Survei";
-      }, 1000);
+      })
+      .catch(error => {
+        alert("Gagal mengirim data. Pastikan koneksi internet stabil.");
+        tombol.disabled = false; 
+        btnText.innerText = "Kirim Survei";
+      });
     }
   </script>
 </body>
