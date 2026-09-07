@@ -476,23 +476,24 @@
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzmsOSGiDOsrV7xBxgyDrYWVkcEiOi5eTu9WS_g_zaI0LaZSQDbAsdO0h4409Pu2pSA/exec';
 
+    // Data Pertanyaan yang telah disesuaikan
     const questions = [
-      "Bagaimana pendapat Anda tentang kemudahan prosedur pelayanan di unit ini?",
-      "Bagaimana kesesuaian persyaratan pelayanan dengan jenis pelayanannya?",
-      "Bagaimana kejelasan dan kepastian petugas yang memberikan pelayanan?",
-      "Bagaimana kedisiplinan petugas dalam memberikan pelayanan?",
-      "Bagaimana tanggung jawab petugas dalam memberikan pelayanan?",
-      "Bagaimana kemampuan petugas dalam memberikan pelayanan?",
-      "Bagaimana kecepatan pelayanan di unit ini?",
-      "Bagaimana keadilan mendapatkan pelayanan di sini?",
-      "Bagaimana kesopanan dan keramahan petugas dalam memberikan pelayanan?",
-      "Bagaimana kewajaran biaya untuk mendapatkan pelayanan?",
-      "Bagaimana kesesuaian antara biaya yang dibayarkan dengan yang ditetapkan?",
-      "Bagaimana ketepatan pelaksanaan terhadap jadwal waktu pelayanan?",
-      "Bagaimana kenyamanan di lingkungan unit pelayanan?",
-      "Bagaimana keamanan pelayanan di unit ini?",
-      "Bagaimana penanganan pengaduan pengguna layanan?",
-      "Bagaimana kualitas sarana dan prasarana pelayanan secara umum?"
+      { text: "Informasi pelayanan tersedia melalui media elektronik maupun nonelektronik", options: ["Sangat tidak setuju", "Tidak setuju", "Setuju", "Sangat setuju"] },
+      { text: "Kesesuaian persyaratan dengan informasi yang diberikan", options: ["Sangat tidak sesuai", "Tidak sesuai", "Sesuai", "Sangat sesuai"] },
+      { text: "Standar dan prosedur layanan diinformasikan dengan jelas", options: ["Sangat tidak setuju", "Tidak setuju", "Setuju", "Sangat setuju"] },
+      { text: "Prosedur/Alur layanan mudah dipahami dan dilakukan", options: ["Sangat tidak setuju", "Tidak setuju", "Setuju", "Sangat setuju"] },
+      { text: "Layanan diberikan sesuai prosedur tanpa kecurangan", options: ["Sangat tidak setuju", "Tidak setuju", "Setuju", "Sangat setuju"] },
+      { text: "Jangka waktu layanan sesuai dengan yang diinformasikan", options: ["Sangat tidak sesuai", "Tidak sesuai", "Sesuai", "Sangat sesuai"] },
+      { text: "Biaya layanan sesuai dengan yang diinformasikan", options: ["Sangat tidak sesuai", "Tidak sesuai", "Sesuai", "Sangat sesuai"] },
+      { text: "Tidak ada pungutan liar (pungli) dalam pelayanan", options: ["Sangat tidak setuju", "Tidak setuju", "Setuju", "Sangat setuju"] },
+      { text: "Tidak ada percaloan/perantara tidak resmi dalam pelayanan", options: ["Sangat tidak setuju", "Tidak setuju", "Setuju", "Sangat setuju"] },
+      { text: "Produk layanan yang diterima sesuai dengan yang dipublikasikan", options: ["Sangat tidak sesuai", "Tidak sesuai", "Sesuai", "Sangat sesuai"] },
+      { text: "Aplikasi sistem pelayanan merespon kebutuhan dengan cepat (membuka halaman, konten, pencarian informasi, unduh/unggah)", options: ["Sangat tidak setuju", "Tidak setuju", "Setuju", "Sangat setuju"] },
+      { text: "Fitur pada aplikasi sistem layanan mudah digunakan", options: ["Sangat tidak setuju", "Tidak setuju", "Setuju", "Sangat setuju"] },
+      { text: "Seluruh pengguna layanan dilayani secara adil tanpa diskriminasi", options: ["Sangat tidak setuju", "Tidak setuju", "Setuju", "Sangat setuju"] },
+      { text: "Pelayanan diberikan tanpa imbalan uang, barang, atau fasilitas di luar aturan", options: ["Sangat tidak setuju", "Tidak setuju", "Setuju", "Sangat setuju"] },
+      { text: "Layanan konsultasi dan pengaduan mudah diakses", options: ["Sangat tidak setuju", "Tidak setuju", "Setuju", "Sangat setuju"] },
+      { text: "Sistem layanan online nyaman dan mudah digunakan", options: ["Sangat tidak setuju", "Tidak setuju", "Setuju", "Sangat setuju"] }
     ];
 
     function renderQuestions() {
@@ -501,12 +502,12 @@
         const qNum = index + 1;
         const html = `
           <div class="question-card">
-            <div class="question-title">${qNum}. ${q}</div>
+            <div class="question-title">${qNum}. ${q.text}</div>
             <div class="radio-group-horizontal">
-              <label class="radio-option"><input type="radio" name="q${qNum}" value="1" required> Tidak Baik</label>
-              <label class="radio-option"><input type="radio" name="q${qNum}" value="2"> Kurang Baik</label>
-              <label class="radio-option"><input type="radio" name="q${qNum}" value="3"> Baik</label>
-              <label class="radio-option"><input type="radio" name="q${qNum}" value="4"> Sangat Baik</label>
+              <label class="radio-option"><input type="radio" name="q${qNum}" value="1" required> ${q.options[0]}</label>
+              <label class="radio-option"><input type="radio" name="q${qNum}" value="2"> ${q.options[1]}</label>
+              <label class="radio-option"><input type="radio" name="q${qNum}" value="3"> ${q.options[2]}</label>
+              <label class="radio-option"><input type="radio" name="q${qNum}" value="4"> ${q.options[3]}</label>
             </div>
           </div>
         `;
