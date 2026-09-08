@@ -108,6 +108,8 @@
       color: var(--text-main);
       margin-top: -2px;
       margin-bottom: 12px;
+      text-wrap: balance; 
+      line-height: 1.4;
     }
     
     .subtitle { 
@@ -356,8 +358,10 @@
       font-weight: 600;
     }
 
-    @media (max-width: 500px) {
-      .card { padding: 15px 10px; }
+    @media (max-width: 480px) {
+      body { padding: 10px; }
+      .card { padding: 30px 15px; } 
+      .instansi-title { font-size: clamp(12px, 4vw, 14px); letter-spacing: -0.2px; }
       h3 { font-size: 20px; }
       input[type="text"], input[type="number"], select, textarea { font-size: 13px; padding: 13px 35px 13px 42px; }
       .radio-group-horizontal .radio-option { flex: 1 1 100%; }
