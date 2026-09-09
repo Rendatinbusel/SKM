@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<!-- update -->
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Survei Kepuasan - KPU Buton Selatan</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Include Chart.js untuk Grafik -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Include SheetJS untuk Download Excel -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   
   <style>
     :root {
@@ -120,11 +123,19 @@
       
       <div style="display:none;" id="content-container">
         
+        <!-- Tombol Download Excel -->
+        <div style="display: flex; justify-content: flex-end; margin-bottom: -10px;">
+          <button onclick="downloadExcel()" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 10px; font-weight: 600; font-family: 'Poppins', sans-serif; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download Excel
+          </button>
+        </div>
+
         <!-- Tabel Responden -->
         <div class="card">
           <h3>Profil Responden (Total: <span id="tot-resp">0</span>)</h3>
           <div class="table-responsive">
-            <table>
+            <table id="table-profil">
               <thead>
                 <tr>
                   <th width="5%">No</th>
@@ -145,7 +156,7 @@
         <div class="card">
           <h3>Indeks Kepuasan Masyarakat Per Jenis Layanan</h3>
           <div class="table-responsive">
-            <table>
+            <table id="table-ikm">
               <thead>
                 <tr>
                   <th rowspan="2">No</th><th rowspan="2">Jenis Layanan</th><th rowspan="2">Jml<br>Resp</th><th colspan="9">Nilai Unsur Pelayanan</th><th rowspan="2">IKM Per Layanan</th>
@@ -176,7 +187,6 @@
   </div>
 
   <script>
-    // GANTI URL DI BAWAH INI SESUAI DENGAN DEPLOYMENT SCRIPT DASHBOARD ANDA
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwj22tJVvfgzYX5onSyS6r6S_Y_8TTAWf9c2BsYrMlKNKqfPayZRh10uo6aYhQ44gDR/exec'; 
 
     document.addEventListener("DOMContentLoaded", function() {
@@ -191,23 +201,25 @@
           let total = data.total || 1; 
           document.getElementById('tot-resp').innerText = data.total;
 
-          // Helper Persentase
-          const pct = (val) => ((val / total) * 100).toFixed(0) + '%';
-          
           // GENERATE TABEL DEMOGRAFI DINAMIS
           let demoHtml = '';
           let demoIndex = 1;
           
-          const buildDemoRows = (title, dataObj) => {
+          // Helper persentase adaptif (menggunakan customTotal untuk baris disabilitas)
+          const buildDemoRows = (title, dataObj, customTotal = total) => {
+            if(!dataObj) return ''; // Proteksi jika data belum siap
             let keys = Object.keys(dataObj);
             let rowSpan = keys.length;
             let html = '';
+            
+            const calcPct = (val) => customTotal > 0 ? ((val / customTotal) * 100).toFixed(0) + '%' : '0%';
+            
             keys.forEach((key, idx) => {
               let val = dataObj[key];
               if(idx === 0) {
-                html += `<tr><td class="text-center" rowspan="${rowSpan}">${demoIndex++}</td><td rowspan="${rowSpan}">${title}</td><td>${key}</td><td class="text-center">${val}</td><td class="text-center">${pct(val)}</td></tr>`;
+                html += `<tr><td class="text-center" rowspan="${rowSpan}">${demoIndex++}</td><td rowspan="${rowSpan}">${title}</td><td>${key}</td><td class="text-center">${val}</td><td class="text-center">${calcPct(val)}</td></tr>`;
               } else {
-                html += `<tr><td>${key}</td><td class="text-center">${val}</td><td class="text-center">${pct(val)}</td></tr>`;
+                html += `<tr><td>${key}</td><td class="text-center">${val}</td><td class="text-center">${calcPct(val)}</td></tr>`;
               }
             });
             return html;
@@ -216,6 +228,11 @@
           demoHtml += buildDemoRows('Jenis Kelamin', data.gender);
           demoHtml += buildDemoRows('Pendidikan', data.edu);
           demoHtml += buildDemoRows('Pekerjaan', data.job);
+          
+          // Tambahan Tabel Disabilitas
+          if(data.penggunaLayanan) demoHtml += buildDemoRows('Kategorisasi Pengguna Layanan', data.penggunaLayanan);
+          if(data.jenisDisabilitas) demoHtml += buildDemoRows('Kategorisasi Jenis Disabilitas', data.jenisDisabilitas, data.totalDisabilitas);
+
           document.getElementById('demografi-tbody').innerHTML = demoHtml;
 
           // GENERATE TABEL IKM LAYANAN
@@ -291,6 +308,27 @@
           document.getElementById('loading-spinner').innerHTML = `<span style="color:red;">Gagal memuat data: ${err.message}</span>`;
         });
     });
+
+    // FUNGSI DOWNLOAD EXCEL
+    function downloadExcel() {
+      // Buat workbook (file Excel) baru
+      var wb = XLSX.utils.book_new();
+      
+      // Ambil elemen tabel dari HTML berdasarkan ID
+      var tblProfil = document.getElementById('table-profil');
+      var tblIkm = document.getElementById('table-ikm');
+      
+      // Ubah tabel HTML menjadi format sheet Excel
+      var wsProfil = XLSX.utils.table_to_sheet(tblProfil);
+      var wsIkm = XLSX.utils.table_to_sheet(tblIkm);
+      
+      // Masukkan sheet ke dalam workbook
+      XLSX.utils.book_append_sheet(wb, wsProfil, "Profil Responden");
+      XLSX.utils.book_append_sheet(wb, wsIkm, "IKM Layanan");
+      
+      // Simpan dan unduh file
+      XLSX.writeFile(wb, "Laporan_SKM_KPU_Busel.xlsx");
+    }
   </script>
 </body>
 </html>
