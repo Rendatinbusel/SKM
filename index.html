@@ -219,6 +219,7 @@
 
     /* Pengaturan Radio Group */
     .radio-group-horizontal { display: flex; gap: 10px; flex-wrap: wrap; }
+    .radio-group-vertical { display: flex; flex-direction: column; gap: 10px; }
     
     .radio-option {
       display: flex;
@@ -350,15 +351,44 @@
     </div>
     <h3>Survei Kepuasan Masyarakat Triwulan IV Tahun 2026</h3>
     <div class="instansi-title">Komisi Pemilihan Umum Kabupaten Buton Selatan</div>
-    <div class="instansi-title" style="color: var(--secondary); margin-top: -8px;">Layanan PPID</div>
     <span class="subtitle">Mohon isi formulir di bawah ini untuk membantu kami meningkatkan kualitas pelayanan.</span>
 
     <form id="formSurvey" onsubmit="kirimData(event)">
-      <input type="hidden" name="jenis_layanan" value="Layanan PPID">
       
       <!-- HALAMAN 1 -->
       <div id="page1" class="form-page active">
-        <div style="text-align: center;"><span class="page-indicator">Halaman 1 dari 2</span></div>
+        <div style="text-align: center;"><span class="page-indicator">Halaman 1 dari 3</span></div>
+        
+        <div class="input-group">
+          <label>Pilih Jenis Layanan</label>
+          <div class="radio-group-vertical">
+            <label class="radio-option">
+              <input type="radio" name="jenis_layanan" value="Layanan PPID" required>
+              <span>Layanan PPID</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="jenis_layanan" value="Layanan Pendidikan Pemilih">
+              <span>Layanan Pendidikan Pemilih</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="jenis_layanan" value="Layanan Kerjasama">
+              <span>Layanan Kerjasama</span>
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="jenis_layanan" value="Layanan Pengaduan Masyarakat">
+              <span>Layanan Pengaduan Masyarakat</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="button" class="btn-primary" onclick="nextPage(2)" style="margin-top: 25px;">
+          Lanjut <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+
+      <!-- HALAMAN 2 -->
+      <div id="page2" class="form-page">
+        <div style="text-align: center;"><span class="page-indicator">Halaman 2 dari 3</span></div>
 
         <div class="input-group">
           <label for="nama">Nama Lengkap</label>
@@ -446,15 +476,14 @@
         </div>
 
         <div class="btn-group" style="margin-top: 25px;">
-          <button type="button" class="btn-primary" onclick="nextPage(2)">
-            Lanjut <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </button>
+          <button type="button" class="btn-secondary" onclick="prevPage(1)">Kembali</button>
+          <button type="button" class="btn-primary" onclick="nextPage(3)">Lanjut</button>
         </div>
       </div>
 
-      <!-- HALAMAN 2 -->
-      <div id="page2" class="form-page">
-        <div style="text-align: center;"><span class="page-indicator">Halaman 2 dari 2</span></div>
+      <!-- HALAMAN 3 -->
+      <div id="page3" class="form-page">
+        <div style="text-align: center;"><span class="page-indicator">Halaman 3 dari 3</span></div>
 
         <div id="questions-container"></div>
 
@@ -469,7 +498,7 @@
         </div>
 
         <div class="btn-group" style="margin-top: 15px;">
-          <button type="button" class="btn-secondary" onclick="prevPage(1)">Kembali</button>
+          <button type="button" class="btn-secondary" onclick="prevPage(2)">Kembali</button>
           <button type="submit" id="tombol" class="btn-primary">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="btn-icon"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             <span id="btn-text">Kirim</span>
